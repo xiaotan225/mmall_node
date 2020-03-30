@@ -4,16 +4,19 @@ var usersModels = require('../models/users')
 var http = require('http')
 /* 添加购物车 */
 router.post('/addCart', function (req, res, next) {
-    let { userName, count, title, describe, price, imgSrc } = req.body
+    let { userName, count, title, describe, price, imgSrc, stock } = req.body
     usersModels.findOne({ 'userName': userName }, function (err, doc) {
         if (doc) {
+            console.log(doc)
             var cartList = {
                 count: count,
                 title: title,
                 describe: describe,
                 price: price,
                 imgSrc: imgSrc,
-                isOpt: true
+                isOpt: true,
+                stock: stock
+
             }
             var sign = ''
             for (let i = 0; i < doc.cartList.length; i++) {
@@ -75,22 +78,42 @@ router.get('/cartData', function (req, res, next) {
 /* 购物车数量更新 */
 router.post('/cartCountUpdate', function (req, res, next) {
     var { userName, count, isOpt, title } = req.body
-    usersModels.update({ "userName": userName, "cartList.title": title }, {
-        "cartList.$.count": count,
-        "cartList.$.isOpt": isOpt,
-    }, function (err, doc) {
+    usersModels.findOne({ "userName": userName }, function (err, doc) {
         if (doc) {
-            res.send({
-                code: '1',
-                msg: '修改购物车商品数量成功'
+            doc.cartList.forEach(item => {
+                if (item.title === title) {
+                    console.log(count > item.stock)
+                    if (parseInt(count) > parseInt(item.stock)) {
+                        res.send({
+                            code: '-2',
+                            msg: '没有存货了'
+                        })
+                    } else {
+                        usersModels.update({ "userName": userName, "cartList.title": title }, {
+                            "cartList.$.count": count,
+                            "cartList.$.isOpt": isOpt,
+                        }, function (err, doc) {
+                            if (doc) {
+                                res.send({
+                                    code: '1',
+                                    msg: '修改购物车商品数量成功'
+                                })
+                            } else {
+                                res.send({
+                                    code: '-1',
+                                    msg: '修改购物车商品数量失败'
+                                })
+                            }
+                        })
+                    }
+
+                }
             })
         } else {
-            res.send({
-                code: '-1',
-                msg: '修改购物车商品数量失败'
-            })
+
         }
     })
+
 
 })
 
@@ -191,9 +214,18 @@ router.get('/cityList', function (req, res, next) {
 router.post('/addOrder', function (req, res, next) {
     var moment = require('moment')
     require('moment/locale/zh-cn')
-    var { userName, goodsData, siteData } = req.body
+    var { userName, goodsData, siteData,total } = req.body
+    if (!siteData.name) {
+        res.send({
+            code: -2,
+            msg: '请选择地址'
+        })
+        return
+    }
     usersModels.findOne({ 'userName': userName }, function (err, doc) {
         if (doc) {
+
+
             var platform = 'mmall';
             var r1 = Math.floor(Math.random() * 10)
             var r2 = Math.floor(Math.random() * 10)
@@ -205,16 +237,17 @@ router.post('/addOrder', function (req, res, next) {
                 orderId: orderId,
                 siteData: siteData,
                 goodsList: goods,
-                createDate: createDate
+                createDate: createDate,
+                total:total
             }
-            doc.orderList.push(orderOptions)
-            let  cartList = []
+            doc.orderList.unshift(orderOptions)
+            let cartList = []
             doc.cartList.forEach(item => {
                 if (!item.isOpt) {
                     cartList.push(item)
                 }
             })
-           
+
             doc.cartList = cartList
             doc.save(function (err, doc) {
 
@@ -234,5 +267,24 @@ router.post('/addOrder', function (req, res, next) {
     })
 })
 
+
+/* 获取订单数据 */
+router.get('/getOrder', function (req, res, next) {
+    let userName = req.query.userName
+    usersModels.findOne({ 'userName': userName }, function (err, doc) {
+        if(doc){
+            res.send({
+                code:1,
+                msg:'获取订单数据成功',
+                result:doc.orderList
+            })
+        }else{
+            res.send({
+                code:-1,
+                msg:'查找用户失败'
+            })
+        }
+    })
+})
 
 module.exports = router;

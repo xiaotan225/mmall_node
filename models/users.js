@@ -15,7 +15,8 @@ var usersSchema = new Schema({
                         "describe": String,
                         "price": String,
                         "imgSrc": String,
-                        "isOpt": Boolean
+                        "isOpt": Boolean,
+                        "stock":String
                 }
         ],
         "addressList": [
@@ -36,3 +37,6 @@ var usersSchema = new Schema({
 
 
 module.exports = mongoose.model('user', usersSchema)
+
+
+

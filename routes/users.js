@@ -10,6 +10,8 @@ router.post('/login', function (req, res, next) {
   usersModels.findOne({ userName: userName }, function (err, doc) {
     if (doc) {
       if (doc.userName == userName && doc.userPwd == userPwd) {
+        req.session.userName = doc.userName
+        console.log(req.session.userName)
         res.send({
           code: 1,
           msg: '登录成功'
@@ -41,7 +43,6 @@ router.post('/register', function (req, res, next) {
     })
     return
   }
-
   if ((Email.time - req.session.time) / 1000 > 60) {
     res.send({
       msg: '验证码已失效',
@@ -103,6 +104,8 @@ router.post('/register', function (req, res, next) {
   })
 })
 
+
+
 /* 邮箱验证码 */
 router.post('/verify', function (req, res, next) {
   let { mail } = req.body;
@@ -119,6 +122,7 @@ router.post('/verify', function (req, res, next) {
 打死也不要告诉别人，请在一分钟内使用。
           `, // plain text body
   }
+
   Email.transporter.sendMail(verifOptons, (err) => {
     if (err) {
       res.send({
@@ -128,7 +132,8 @@ router.post('/verify', function (req, res, next) {
     } else {
       res.send({
         code: 1,
-        msg: '验证码发送成功'
+        msg: '验证码发送成功',
+        code111: req.session.verifyCode
       })
     }
   })
@@ -221,21 +226,49 @@ router.post('/updateUserPwd', function (req, res, next) {
 
 
 /* 获取用户信息 */
-router.get('/getUserList', function (req, res, next) {
-  let userName = req.param('userName')
-  usersModels.findOne({ 'userName': userName }, function (err, doc) {
-    if (doc) {
-      res.send({
-        msg: '获取用户信息成功',
-        code: 1,
-        result:doc
-      })
-    } else {
-      res.send({
-        msg: '获取用户信息失败',
-        code: -1
-      })
-    }
+router.post('/getUser', function (req, res, next) {
+  let userName = req.session.userName
+  if (userName) {
+    usersModels.findOne({ userName: userName }, function (err, doc) {
+      if (doc) {
+        res.send({
+          msg: '获取用户信息成功',
+          code: 1,
+          result: {
+            userName:userName,
+            mail:doc.mail,
+            addressList:doc.addressList
+          }
+        })
+      } else {
+        res.send({
+          msg: '未注册账号',
+          code: -2,
+        })
+      }
+    })
+  
+  } else {
+    res.send({
+      msg: '获取用户信息失败',
+      code: -1
+    })
+  }
+
+ 
+
+
+
+
+
+})
+
+/* 退出用户账号 */
+router.post('/logout', function (req, res, next) {
+  req.session.userName = ''
+  res.send({
+    code: 1,
+    msg: '退出成功'
   })
 })
 
@@ -244,10 +277,10 @@ router.get('/getUserList', function (req, res, next) {
 router.post('/amend', function (req, res, next) {
   let { userName, rawPassword, newPassword } = req.body;
   console.log(newPassword)
-  usersModels.findOne({'userName':userName},function (err,doc) { 
-    if(doc){
-      console.log(doc.userPwd,rawPassword)
-      if(doc.userPwd == rawPassword){
+  usersModels.findOne({ 'userName': userName }, function (err, doc) {
+    if (doc) {
+      console.log(doc.userPwd, rawPassword)
+      if (doc.userPwd == rawPassword) {
         // if(!newPasswords){
         //   res.send({
         //     code:-3,
@@ -255,26 +288,26 @@ router.post('/amend', function (req, res, next) {
         //   })
         // }
         doc.userPwd = newPassword
-        doc.save(function () { 
+        doc.save(function () {
           res.send({
-            code:1,
-            msg:'修改密码成功'
+            code: 1,
+            msg: '修改密码成功'
           })
-         })
-      }else{
+        })
+      } else {
         res.send({
-          code:-2,
-          msg:'修改密码失败'
+          code: -2,
+          msg: '修改密码失败'
         })
       }
-    }else{
+    } else {
       res.send({
-        code:-1,
-        msg:'修改密码失败'
+        code: -1,
+        msg: '修改密码失败'
       })
       console.log(err)
     }
-   })
+  })
 
 })
 

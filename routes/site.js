@@ -18,9 +18,6 @@ router.post('/addSite', function (req, res, next) {
 
             doc.addressList.forEach(item => {
                 item.checked = false
-                console.log(item.checked)
-                console.log(item)
-
             });
             doc.addressList.push(siteList)
             doc.save(function (err, doc) {
@@ -40,6 +37,7 @@ router.post('/addSite', function (req, res, next) {
     })
 
 })
+
 
 /* 获取用户地址列表 */
 router.get('/getSiteList', function (req, res, next) {
@@ -62,14 +60,12 @@ router.get('/getSiteList', function (req, res, next) {
 })
 
 
-/* 设置用户地址 */
+/* 设置用户地址状态 */
 router.post('/setSite', function (req, res, next) {
-    var {userName,id} = req.body
+    var { userName, id } = req.body
     usersModels.findOne({ 'userName': userName }, function (err, doc) {
         if (doc) {
             doc.addressList.forEach(item => {
-                console.log(item._id)
-
                 if (item._id == id) {
                     item.checked = true
                 } else {
@@ -94,4 +90,38 @@ router.post('/setSite', function (req, res, next) {
     })
 })
 
+
+/* 删除地址 */
+router.post('/del', function (req, res, next) {
+    let { id, userName } = req.body
+    usersModels.findOne({ 'userName': userName }, function (err, doc) {
+        if(doc){
+            var myarr = []
+            doc.addressList.forEach(item=>{
+                if(item._id != id){
+                    myarr.push(item)
+                }
+            })
+            doc.addressList = myarr
+            doc.save(function (err,doc) { 
+                if(doc){
+                    res.send({
+                        code: 1,
+                        msg: '删除成功'
+                    })
+                }else{
+                    res.send({
+                        code: -2,
+                        msg: '删除失败'
+                    })
+                }
+             })
+        }else{
+            res.send({
+                code:'-1',
+                msg:'用户查询失败'
+            })
+        }
+    })
+})
 module.exports = router

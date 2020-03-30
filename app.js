@@ -12,36 +12,34 @@ var cartRouter = require('./routes/cart');
 var siteRouter = require('./routes/site');
 var app = express();
 
+
 var { Mongoose } = require('./util/config')
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// app.all('*', function (req, res, next) {
+app.all('*', function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");//项目上线后改成页面的地址
+  res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  next();
 
-//   res.header("Access-Control-Allow-Origin", "*");//项目上线后改成页面的地址
+});
 
-//   res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
 
-//   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-
-//   next();
-
-// });
-
-/* sesssion配置 */
+/* session配置 */
 app.use(session({
   secret: 'aaaa',
-  name: 'sessionId',
+  name:'sessionId',
   resave: false,
   saveUninitialized: false,
   cookie: { secure: true },
-  cookie: {
-    maxAge: 1000 * 60 * 60
+  cookie:{
+    maxAge:1000 * 60 * 60
   }
+  
 }))
-
 
 
 

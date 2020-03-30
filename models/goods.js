@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var goodsSchema = new Schema({
-    "mobile": [
+    "手机": [
         {
             "productID":String,
             "title": String,
@@ -24,13 +24,48 @@ var goodsSchema = new Schema({
             ]
         }
     ],
-    "digital": [
+    "电脑": [
         {
+            "productID":String,
             "title": String,
             "describe": String,
             "stock": Number,
             "price": Number,
-            "imgSrc": String
+            "imgSrc": String,
+            "childImgSrc": [
+                { "src": String },
+                { "src": String },
+                { "src": String },
+                { "src": String }
+            ],
+            "detailsImgSrc": [
+                { "src": String },
+                { "src": String },
+                { "src": String },
+
+            ]
+        }
+    ],
+    "数码": [
+        {
+            "productID":String,
+            "title": String,
+            "describe": String,
+            "stock": Number,
+            "price": Number,
+            "imgSrc": String,
+            "childImgSrc": [
+                { "src": String },
+                { "src": String },
+                { "src": String },
+                { "src": String }
+            ],
+            "detailsImgSrc": [
+                { "src": String },
+                { "src": String },
+                { "src": String },
+
+            ]
         }
     ],
     "slideshow": [
@@ -46,6 +81,7 @@ var goodsSchema = new Schema({
     ]
 
 });
+
 
 
 module.exports = mongoose.model('goods', goodsSchema)
