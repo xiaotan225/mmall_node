@@ -214,7 +214,7 @@ router.get('/cityList', function (req, res, next) {
 router.post('/addOrder', function (req, res, next) {
     var moment = require('moment')
     require('moment/locale/zh-cn')
-    var { userName, goodsData, siteData,total } = req.body
+    var { userName, goodsData, siteData, total } = req.body
     if (!siteData.name) {
         res.send({
             code: -2,
@@ -238,7 +238,7 @@ router.post('/addOrder', function (req, res, next) {
                 siteData: siteData,
                 goodsList: goods,
                 createDate: createDate,
-                total:total
+                total: total
             }
             doc.orderList.unshift(orderOptions)
             let cartList = []
@@ -272,19 +272,134 @@ router.post('/addOrder', function (req, res, next) {
 router.get('/getOrder', function (req, res, next) {
     let userName = req.query.userName
     usersModels.findOne({ 'userName': userName }, function (err, doc) {
-        if(doc){
+        if (doc) {
             res.send({
-                code:1,
-                msg:'获取订单数据成功',
-                result:doc.orderList
+                code: 1,
+                msg: '获取订单数据成功',
+                result: doc.orderList
             })
-        }else{
+        } else {
             res.send({
-                code:-1,
-                msg:'查找用户失败'
+                code: -1,
+                msg: '查找用户失败'
             })
         }
     })
 })
+
+
+
+/* 管理员操作 */
+
+/* 获取全部订单数据 */
+router.get('/getOrderAll', function (req, res, next) {
+    let isAdmin = req.session.isAdmin
+    if (!isAdmin) {
+        res.send({
+            code: -3,
+            msg: '没有权限'
+        })
+        return
+    }
+    usersModels.find(function (err, doc) {
+        let list = []
+        doc.forEach((item, index) => {
+            item.orderList.forEach(item => {
+                list.push({
+                    orderCode: item.orderId,
+                    name: item.siteData.name,
+                    account: doc[index].userName,
+                    createTime: doc[index].date
+                })
+            })
+        })
+        res.send({
+            code: 0,
+            result: list
+        })
+    })
+})
+
+
+
+/* 获取订单详情 */
+router.get('/getOrderDetails', function (req, res, next) {
+    let orderId = req.query.orderId
+    let isAdmin = req.session.isAdmin
+    if (!isAdmin) {
+        res.send({
+            code: -3,
+            msg: '没有权限'
+        })
+        return
+    }
+    let orderDetailsData = {
+
+    }
+    usersModels.find(function (err, doc) {
+        doc.forEach((item, index) => {
+            item.orderList.forEach(item => {
+                if (item.orderId == orderId) {
+                    orderDetailsData.orderCode = item.orderId;
+                    orderDetailsData.name = item.siteData.name;
+                    orderDetailsData.siteData = item.siteData.value + item.siteData.detailSite;
+                    orderDetailsData.account = doc[index].userName;
+                    orderDetailsData.cellPhone = item.siteData.mobile;
+                    orderDetailsData.createTime = item.createDate;
+                    orderDetailsData.goodsList = item.goodsList;
+                    orderDetailsData.total = item.total
+                }
+            })
+        })
+        res.send({
+            code: 0,
+            result: orderDetailsData
+        })
+    })
+
+})
+
+
+/* 删除订单信息 */
+router.post('/cartDelete', function (req, res, next) {
+    let { userName, orderCode } = req.body
+    let isAdmin = req.session.isAdmin
+    if (!isAdmin) {
+        res.send({
+            code: -3,
+            msg: '没有权限'
+        })
+        return
+    }
+    usersModels.findOne({ 'userName': userName }, function (err, doc) {
+        if (doc) {
+            doc.orderList.forEach((item, index) => {
+                if (item.orderId == orderCode) {
+                    doc.orderList.splice(index, 1)
+                }
+            })
+            doc.save(function (err, doc) {
+                if (doc) {
+                    res.send({
+                        code: 0,
+                        msg: '删除成功'
+                    })
+                } else {
+                    res.send({
+                        code: -2,
+                        msg: '删除失败'
+                    })
+                }
+            })
+        } else {
+            res.send({
+                code: -1,
+                msg: '没有找到账号'
+            })
+        }
+    })
+
+})
+
 
 module.exports = router;

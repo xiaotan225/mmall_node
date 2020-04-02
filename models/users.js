@@ -5,6 +5,9 @@ var usersSchema = new Schema({
         "userName": String,
         "userPwd": String,
         "mail": String,
+        "isAdmin":Boolean,
+        "date":String,
+        "isFreeze":Boolean,
         "orderList": [
             
         ],
