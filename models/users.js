@@ -9,6 +9,7 @@ var usersSchema = new Schema({
         "date":String,
         "isFreeze":Boolean,
         "orderList": [
+                
             
         ],
         "cartList": [

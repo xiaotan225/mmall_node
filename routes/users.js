@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var usersModels = require('../models/users')
+
 var { Email } = require('../util/config')
 /* GET users listing. */
 
@@ -16,9 +17,11 @@ let emptyStr =  function(str) {
 /* 登录 */
 router.post('/login', function (req, res, next) {
   let { userName, userPwd } = req.body
+  console.log('asdf')
   usersModels.findOne({ userName: userName }, function (err, doc) {
     if (doc) {
       let isFreeze = doc.isFreeze
+      console.log(doc)
       if (isFreeze) {
         res.send({
           code: -2,
@@ -170,6 +173,7 @@ router.post('/verify', function (req, res, next) {
 
   Email.transporter.sendMail(verifOptons, (err) => {
     if (err) {
+      console.log(err )
       res.send({
         code: -1,
         msg: '验证码发送失败'

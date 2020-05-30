@@ -1,0 +1,14 @@
+{ 
+    "_id" : ObjectId("5ed1a7d1abf4596206539506"), 
+    "slideshow" : [
+        {
+            "imgSrc" : "https://aecpm.alicdn.com/simba/img/TB183NQapLM8KJjSZFBSutJHVXa.jpg"
+        }, 
+        {
+            "imgSrc" : "https://aecpm.alicdn.com/simba/img/TB1JNHwKFXXXXafXVXXSutbFXXX.jpg"
+        }, 
+        {
+            "imgSrc" : "https://img.alicdn.com/tfs/TB17SKwHVP7gK0jSZFjXXc5aXXa-520-280.jpg_q90_.webp"
+        }
+    ]
+}

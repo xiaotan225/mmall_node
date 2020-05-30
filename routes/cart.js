@@ -7,7 +7,6 @@ router.post('/addCart', function (req, res, next) {
     let { userName, count, title, describe, price, imgSrc, stock } = req.body
     usersModels.findOne({ 'userName': userName }, function (err, doc) {
         if (doc) {
-            console.log(doc)
             var cartList = {
                 count: count,
                 title: title,

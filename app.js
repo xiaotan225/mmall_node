@@ -14,17 +14,21 @@ var app = express();
 
 
 var { Mongoose } = require('./util/config')
-
+var cors = require('express-cors')
+ 
+app.use(cors({
+    allowedOrigins: [
+        '127.0.0.1:8080'
+    ]
+}))
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
-app.all('*', function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");//项目上线后改成页面的地址
-  res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type");
-  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+app.all('*', function(req, res, next) {
+  // res.header("Access-Control-Allow-Origin", "http://127.0.0.1:8080");//前端域名
+  res.header("Access-Control-Allow-Credentials",'true');
+  res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
   next();
-
 });
 
 
@@ -49,11 +53,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/goods', goodsRouter);
-app.use('/cart', cartRouter);
-app.use('/site', siteRouter);
+app.use('/api/', indexRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/goods', goodsRouter);
+app.use('/api/cart', cartRouter);
+app.use('/api/site', siteRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

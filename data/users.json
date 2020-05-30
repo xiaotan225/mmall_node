@@ -1,0 +1,50 @@
+﻿{ 
+    "_id" : ObjectId("5ed1b0b5d96f6a4b8ce3e36a"), 
+    "orderList" : [
+        {
+            "orderId" : "mmall020205303", 
+            "siteData" : {
+                "_id" : "5ed1b120d96f6a4b8ce3e36c", 
+                "name" : "小潭", 
+                "value" : "啊啊省 啊啊市 啊啊区", 
+                "detailSite" : "啊啊啊啊6号", 
+                "mobile" : "1111111111111", 
+                "checked" : true
+            }, 
+            "goodsList" : [
+                {
+                    "_id" : "5ed1b0e2d96f6a4b8ce3e36b", 
+                    "count" : "3", 
+                    "title" : "小米MIX2S 全面屏手机 6GB+64GB 黑色", 
+                    "describe" : "一面科技，一面艺术", 
+                    "price" : "3299", 
+                    "imgSrc" : "http://img.happymmall.com/12179294-9ed9-4cd7-beea-9b69d492eca3.jpg", 
+                    "isOpt" : true, 
+                    "stock" : "9821"
+                }
+            ], 
+            "createDate" : "2020年5月30日星期六 09:04", 
+            "total" : NumberInt(9897)
+        }
+    ], 
+    "userName" : "tan", 
+    "userPwd" : "tan", 
+    "mail" : "2254301565@qq.com", 
+    "isAdmin" : true, 
+    "date" : "2020年5月30日上午9点02分", 
+    "isFreeze" : false, 
+    "cartList" : [
+
+    ], 
+    "addressList" : [
+        {
+            "_id" : ObjectId("5ed1b120d96f6a4b8ce3e36c"), 
+            "name" : "小潭", 
+            "value" : "啊啊省 啊啊市 啊啊啊区", 
+            "detailSite" : "啊啊啊啊啊6号", 
+            "mobile" : "1111111", 
+            "checked" : true
+        }
+    ], 
+    "__v" : NumberInt(3)
+}

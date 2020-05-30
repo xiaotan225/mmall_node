@@ -23,7 +23,7 @@ var Email = {
             port: 465, //qq邮件服务所占用的端口
             auth: {
                 user: "2646397614@qq.com",//开启SMTP的邮箱，有用发送邮件
-                pass: "ycnzbuzmocmsebja"//授权码
+                pass: "mbwqmqntfqapdjaf"//授权码
             }
         })
     },
